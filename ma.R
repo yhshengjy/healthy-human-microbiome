@@ -746,7 +746,6 @@ ggplot(df_ord, aes(x=country, y=PCo2, fill=country)) +
 
 
 #===============================================================================
-#mmdg
 country_mdg = filter(sampleMetadata, disease=="healthy") %>% 
   filter(body_site =="stool")  %>%
   filter(country %in% c("MDG", "IND"))
@@ -784,31 +783,25 @@ t1$plot_group_distance(color_values = RColorBrewer::brewer.pal(12, "Paired"))
 #===============================================================================
 t1$cal_group_distance()
 bdf = t1$res_group_distance
-fs5a = t1$plot_group_distance(color_values = RColorBrewer::brewer.pal(12, "Paired")) + theme_ipsum() + 
+t1$plot_group_distance(color_values = RColorBrewer::brewer.pal(12, "Paired")) + theme_ipsum() + 
   theme(axis.title.x = element_text(size = 16, family = "Times"), 
         axis.title.y = element_text(size = 16, family = "Times"),
         axis.text.x = element_text(family = "Times", size = 15),
         axis.text.y = element_text(family = "Times", size = 15),
         legend.title = element_text(size = 14),
         legend.text = element_text(size = 13))
-save(fs5a, file = "fs5a.rda")
-load(file = "fs5a.rda")
+
 
 mbdf = bdf %>% group_by(country) %>% summarise(mb = mean(value))
 mt_df = full_join(mtot_df, mbdf, by = "country")
 
 df1 = df %>% filter(country %in% c("CHN vs MDG","CHN vs NLD","GBR vs CHN","IND vs CHN","USA vs CHN"))
 t1$res_group_distance = df1
-fs5b = t1$plot_group_distance(color_values = RColorBrewer::brewer.pal(12, "Paired")) + theme_ipsum() + labs(color = "Country") + 
+t1$plot_group_distance(color_values = RColorBrewer::brewer.pal(12, "Paired")) + theme_ipsum() + labs(color = "Country") + 
   theme(axis.title.x = element_text(size = 16, family = "Times"), 
         axis.title.y = element_text(size = 16, family = "Times"),
         axis.text.x = element_text(family = "Times", size = 15),
         axis.text.y = element_text(family = "Times", size = 15))
-save(fs5b, file = "fs5b.rda")
-load(file = "fs5b.rda")
-
-df_c =  df %>% filter(country %in% c("GBR vs CHN","USA vs CHN"))
-wilcox.test(value~country, df_c)
 
 m1 = clone(m)
 m1$sample_table <- subset(m1$sample_table, country == "NLD")
@@ -950,10 +943,8 @@ gbr_ar = sapply(df_con_t, function(x) return(ifelse(x %in% df_gbr_s90$Species, 1
 nld_ar = sapply(df_con_t, function(x) return(ifelse(x %in% df_nld_s90$Species, 1, 0)))
 core_df = data.frame(chn_ar,usa_ar,ind_ar,mdg_ar,gbr_ar,nld_ar)
 colnames(core_df) = c("CHN","USA","IND","MDG","GBR","NLD")
-fs3f = pheatmap::pheatmap(core_df,cluster_rows = FALSE,cluster_cols = F, 
+pheatmap::pheatmap(core_df,cluster_rows = FALSE,cluster_cols = F, 
                           legend = FALSE, cellwidth = 15, color = c("#A6D854", "#FFD92F"),fontsize = 12)
-save(fs3f, file = "fs3f.rda")
-load(file = "fs3f.rda")
 
 #==============================================================================
 dfotu = as.data.frame(otu_table(con_cr))
