@@ -11,18 +11,6 @@ library(ggtree)
 library(ggtreeExtra)
 library(ggnewscale)
 
-setwd("e:/ma16/")
-
-load(file = "country_sample.csv")
-
-country_crt = country_md_cr_t %>%
-  returnSamples("relative_abundance")
-
-country_crt1 = country_md_cr_t %>%
-  returnSamples("relative_abundance", counts = T)
-
-con_cr = makePhyloseqFromTreeSummarizedExperiment(country_crt, abund_values = "relative_abundance")
-
 #======================================================================
 df_otu = as.data.frame(otu_table(con_cr))
 rownames(df_otu) = sapply(rownames(df_otu),function(x) unlist(strsplit(x, split = "\\|"))[7])
@@ -76,7 +64,6 @@ dadf[dadf>=5]
 corec = table(mr_c_chn[,1])
 corec = corec[corec>=3]
 df_corec = data.frame()
-
 
 mr_c_u = Reduce(union, list(mr_c_chn[,1], mr_c_usa[,1], mr_c_ind[,1], mr_c_mdg[,1], mr_c_gbr[,1], mr_c_nld[,1]))
 mr_c_u = sapply(mr_c_u, function(x) unlist(strsplit(x, split = "__"))[2])
