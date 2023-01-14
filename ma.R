@@ -15,7 +15,7 @@ library(ggtree)
 library(ggtreeExtra)
 library(ggnewscale)
 #======================================================================
-setwd("e:/ma16/")
+setwd("e:/ma/")
 
 load(file = "country_sample.csv")
 
