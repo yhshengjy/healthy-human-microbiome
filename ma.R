@@ -76,27 +76,6 @@ ggplot(dfotu, aes(x = Country, y = bfr, fill = Country)) + geom_boxplot(alpha=0.
         axis.text.x = element_text(family = "Times", size = 15),
         axis.text.y = element_text(family = "Times", size = 15))
 #======================================================================
-con_cr = filter_taxa(con_cr, function(x) mean(x) > 0, TRUE)
-con_cr_pc = tax_glom(con_cr, taxrank = rank_names(con_cr)[2])
-dfotu = as.data.frame(otu_table(con_cr_pc))
-
-con_cr_pc = tax_glom(con_cr, taxrank = rank_names(con_cr)[6])
-con_cr_pc = subset_taxa(con_cr_pc, Phylum=="Euryarchaeota")
-taxdf = as.data.frame(tax_table(con_cr_pc))
-dfotu = as.data.frame(otu_table(con_cr_pc))
-
-con_cr_pc = subset_taxa(con_cr, Phylum=="Euryarchaeota")
-taxdf = as.data.frame(tax_table(con_cr_pc))
-dfotu = as.data.frame(otu_table(con_cr_pc))[9,]
-dfotu = t(dfotu)
-colnames(dfotu) = "Methanobrevibacter_smithii"
-dfotu = cbind(dfotu, as.data.frame(sample_data(con_cr_pc))[ ,"country"])
-dfotu[,1] = ifelse(dfotu[,1]>0,1,0)
-df = full_join(dfotu %>% group_by(country) %>% summarise(n1 = sum(Methanobrevibacter_smithii)),
-               dfotu %>% group_by(country) %>% count())
-df$n =  df$n-df$n1
-pairwiseNominalIndependence(df,chisq = T, fisher = F, gtest = F)
-#======================================================================
 m = phyloseq2meco(con_cr)
 m$cal_abund()
 t = trans_abund$new(dataset = m, taxrank = "Phylum", ntaxa = 10, groupmean = "country")
@@ -145,17 +124,6 @@ t1$plot_bar(others_color = "grey70", legend_text_italic = FALSE, use_colors = ge
 )
 
 
-df_t_g = t1$abund_data
-df_t_g$Abundance = signif(df_t_g$Abundance,3)
-write.csv(df_t_g, file = "tax_df_g.tsv", row.names=F, quote = F)
-
-df1 = df_t_g %>% filter(Sample == "CHN") 
-df2 = df_t_g %>% filter(Sample == "USA") 
-df3 = df_t_g %>% filter(Sample == "GBR") 
-df4 = df_t_g %>% filter(Sample == "NLD") 
-df5 = df_t_g %>% filter(Sample == "IND")
-df6 = df_t_g %>% filter(Sample == "MDG")
-
 getPalette = colorRampPalette(brewer.pal(12, "Paired"))
 m = phyloseq2meco(con_cr)
 m$tax_table = as.data.frame(tax_table(con_cr))
@@ -179,20 +147,6 @@ df_t_s$Abundance = signif(df_t_s$Abundance,3)
 write.csv(df_t_s, file = "tax_df_g.tsv", row.names=F, quote = F)
 t1 = trans_abund$new(dataset = m, taxrank = "Species", ntaxa = 30)
 t1$plot_box(group = "country")
-
-con_crs = filter_taxa(con_cr, function(x) mean(x) > 0.1, TRUE)
-m = phyloseq2meco(con_crs)
-m$cal_abund()
-t1 = trans_abund$new(dataset = m, taxrank = "Genus", ntaxa = 20, groupmean = "country")
-df_t_s = t1$abund_data
-df_w = tidyr::spread(df_t_s, key = "Taxonomy", value = "Abundance", fill = 0)
-rownames(df_w) = df_w[,1]
-df_w = df_w[,-1]
-df_w = t(df_w)
-df_w = df_w/100
-pheatmap::pheatmap(df_w, cluster_rows = F,cellwidth = 15, border_color = NA,legend = T, 
-         clustering_distance_rows = "correlation", show_rownames = F, fontsize = 18)
-
 #======================================================================
 library(forcats)
 con_cr_pc = tax_glom(con_cr, taxrank = rank_names(con_cr)[2])
